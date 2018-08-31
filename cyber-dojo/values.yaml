@@ -9,11 +9,11 @@ image:
   nginx:
     repository: cyberdojo/nginx
     tag: latest
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   web:
     repository: cyberdojo/web
     tag: latest
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
 
 service:
   nginx:
