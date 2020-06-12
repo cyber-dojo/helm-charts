@@ -1,0 +1,130 @@
+# Default values for cyber-dojo-service.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# app name
+#fullnameOverride: "my-app"
+
+# deployment spec
+# if daemonSet is true, remove replicaCount
+# daemonSet is particular for puller.
+#daemonSet: true
+replicaCount: 1
+# uncomment the line below for saver and mapper and any service with persistent volumes
+#updateStrategy: Recreate
+
+# The secret that will be used for pulling docker images
+# imagePullSecrets:
+#   - name: docker-registry
+
+# autoscaling
+# autoscaling: 
+#   enabled: false
+  # minReplicas: 1
+  # maxReplicas: 2
+  # targetCPUUtilizationPercentage: 70
+  # targetMemoryUtilizationPercentage: 70
+
+# pod disruption budget
+# disruptionBudget:
+  # enabled: false
+  # minAvailable: 2
+
+volumes: {}
+  # - name: non-persistent-volume
+  #   emptyDir: {}
+  # - name: cloudsql-instance-credentials
+  #   secret:
+  #     secretName: cloudsql-instance-credentials
+
+podSecurityContext: {}
+  # runAsUser: 1000
+  # fsGroup: 2000
+
+# init containers (they do a job and die)
+initContainers: {}
+  # - name: my-init-container
+  #   image: praqma/network-multitool
+  #   tag: "latest"
+  #   imagePullPolicy:
+  #   env:
+  #      - variable1 : value1 
+  #   args:
+  #     - /bin/bash
+  #     - -c
+  #     - curl google.com
+  #   volumeMounts:
+  #     - name: non-persistent-volume
+  #       mountPath: /path/to/somwhere
+
+# containers
+# provide default values that you HAVE to overwrite in your values.yaml file
+containers: {}
+  # - name: 
+  #   image: 
+  #   tag:     
+  #   securityContext:
+  #     readOnlyRootFilesystem: true
+  #   volumeMounts:
+  #     - name: non-persistent-volume
+  #       mountPath: /tmp/pod
+  #       readOnly: true
+  #     - name: another-volume
+  #       mountPath: /tmp/volume2
+  #       readOnly: false
+  #   ports:
+  #     - name: "my-port"
+  #       containerPort: 8080
+  #       protocol: TCP
+  #   resources: 
+  #     limits:
+  #      cpu: 100m
+  #      memory: 128Mi
+  #     requests:
+  #      cpu: 100m
+  #      memory: 128Mi
+  #   livenessProbe:
+  #     path: /health
+  #     port: 80
+  #   readinessProbe:
+  #     path: /health
+  #     port: 80
+
+envFromSecret: {}
+  # - name: KEY_VAULT_APPLICATIONSECRET
+  #   secretName: azure-key-vault
+  #   secretKey: secret  
+
+nodeSelector: {}
+
+affinity: {}
+
+tolerations: []
+
+# service
+service: {}
+  # port: 80  
+  # annotations:
+  #   - prometheus.io/scrape: "true"
+  #   - prometheus.io/port: "80"
+
+# When ingress is set to true. tls is also added. For details see templates/ingress
+ingress:
+  # Used to create an Ingress record.
+  enabled: false
+  # hosts: 
+  #   - example.com
+  # annotations: {}
+  # additionalPaths:
+  #   - path: \
+  #     serviceName: xyz
+  #     servicePort: 8080
+  #   - path: \
+  #     serviceName: abc
+  #     servicePort: 8090  
+
+# pvc:
+#   name: my-pvc
+#   storage: 5Gi
+#   matchLabels:
+#     target: my-app  

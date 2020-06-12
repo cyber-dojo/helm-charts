@@ -1,0 +1,25 @@
+{{- if .Values.pvc }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.pvc.name }}
+  labels:
+    app: {{ template "app.fullname" . }}
+    chart: {{ template "app.chart" . }}
+    release: {{ .Release.Name }}-{{ .Chart.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  storageClassName: "standard"
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.pvc.storage | default "5Gi" }}
+  {{- if .Values.pvc.matchLabels }}
+  selector:
+    matchLabels:
+      {{- range $key,$value := .Values.pvc.matchLabels }}
+      {{ $key }} : {{ $value }}
+      {{- end }}
+  {{- end }}    
+{{- end }}      
