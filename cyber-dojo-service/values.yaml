@@ -103,6 +103,7 @@ tolerations: []
 
 # service
 service: {}
+  # type: "ClusterIP" (default), "NodePort" or "LoadBalancer"
   # port: 80  
   # annotations:
   #   - prometheus.io/scrape: "true"
@@ -122,7 +123,6 @@ ingress:
   #   - path: \
   #     serviceName: abc
   #     servicePort: 8090  
-
 # pvc:
 #   name: my-pvc
 #   storage: 5Gi

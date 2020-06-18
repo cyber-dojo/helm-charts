@@ -10,14 +10,11 @@ metadata:
     heritage: {{ .Release.Service }}
   annotations:
     kubernetes.io/ingress.class: "nginx"
-    certmanager.k8s.io/cluster-issuer: "letsencrypt-production"
-    kubernetes.io/tls-acme: "true"
-    certmanager.k8s.io/acme-challenge-type: "http01"
+    cert-manager.io/cluster-issuer: "letsencrypt-production"
   {{- with .Values.ingress.annotations }}
 {{ toYaml . | indent 4 }}
 {{- end }}
 spec:
-{{- if .Values.ingress.hosts }}
   tls:
     - hosts:
         {{- range .Values.ingress.hosts }}
@@ -34,9 +31,4 @@ spec:
               serviceName: {{ template "app.fullname" $ }}
               servicePort: {{ $.Values.service.port | default 80 }}
   {{- end }}
-{{- else }}
-  backend:
-    serviceName: {{ template "app.fullname" $ }}
-    servicePort: {{ $.Values.service.port | default 80 }}
-{{- end }}
 {{- end }}
