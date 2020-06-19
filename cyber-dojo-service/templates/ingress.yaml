@@ -9,8 +9,6 @@ metadata:
     release: {{ .Release.Name }}-{{ .Chart.Name }}
     heritage: {{ .Release.Service }}
   annotations:
-    kubernetes.io/ingress.class: "nginx"
-    cert-manager.io/cluster-issuer: "letsencrypt-production"
   {{- with .Values.ingress.annotations }}
 {{ toYaml . | indent 4 }}
 {{- end }}
