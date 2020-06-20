@@ -1,0 +1,163 @@
+{{- $containers := .Values.containers }}
+{{- if gt (len $containers) 0 }}
+apiVersion: apps/v1
+{{- if .Values.daemonSet }}
+kind: DaemonSet
+{{- else }}
+kind: Deployment
+{{- end }}
+metadata:
+  name: {{ template "app.fullname" . }}
+  labels:
+    app: {{ template "app.fullname" . }}
+    chart: {{ template "app.chart" . }}
+    release: {{ .Release.Name }}-{{ .Chart.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  {{- if .Values.daemonSet }}
+  updateStrategy:
+    type: {{ .Values.updateStrategy | default "RollingUpdate" }}
+  {{- else }}
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+   type: {{ .Values.updateStrategy | default "RollingUpdate" }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app: {{ template "app.fullname" . }}
+      release: {{ .Release.Name }}-{{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "app.fullname" . }}
+        release: {{ .Release.Name }}-{{ .Chart.Name }}
+    spec:
+      {{- with .Values.podSecurityContext }}
+      securityContext:
+{{ toYaml . | indent 8 }}
+      {{- end }}
+      {{- if .Values.initContainers }}
+      initContainers:
+        {{- range .Values.initContainers }}
+        - name: {{ .name }}
+          image: "{{ required "init contianer image is required!" .image }}:{{ required "init container image tag is required!" .tag }}"
+          imagePullPolicy: {{ .imagePullPolicy | default "IfNotPresent" }}
+          {{- if .env }}
+          env:
+            {{- range $key, $value := .env }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+            {{- end }}
+
+          {{- end }}
+          {{- if .args }}
+          args:
+            {{- range .args }}
+            - {{ . }}
+            {{- end }}
+          {{- end }}
+          {{- if .command }}
+          command: {{ .command }}
+          {{- end }}
+          {{- if .volumeMounts }}
+          volumeMounts:
+            {{- range .volumeMounts }}
+            - name: {{ .name }}
+              mountPath: {{ .mountPath }}
+            {{- end }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
+      containers:
+      {{- range $containers }}
+        - name: {{ .name }}
+          image: "{{ .image | default $.Values.fullNameOverride }}:{{ .tag | default "beta" }}"
+          imagePullPolicy: {{ .pullPolicy | default "IfNotPresent" }}
+          {{- if .command }}
+          command: {{ .command }}
+          {{- end }}
+          {{- if .env }}
+          env:
+          {{- range $key, $value := .env }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+          {{- end }}
+          {{- range $.Values.envFromSecret }}
+          - name: {{ .name }}
+            valueFrom:
+              secretKeyRef:
+                name: {{ .secretName }}
+                key: {{ .secretKey }}
+          {{- end }}
+          {{- end }}
+          {{- if .securityContext }}
+          securityContext:
+{{ toYaml .securityContext | indent 12 }}
+          {{- end }}
+        {{- if .args }}
+          args:
+          {{- range .args }}
+            - {{ . }}
+          {{- end }}
+        {{- end }}
+          ports:
+          {{- if .ports }}
+{{ toYaml .ports | indent 12 }}
+          {{- else }}
+            - containerPort: {{ $.Values.service.port }}
+           {{- end }}
+        {{- if .livenessProbe }}
+          livenessProbe:
+            httpGet:
+              path: {{ .livenessProbe.path }}
+              port: {{ .livenessProbe.port }}
+            initialDelaySeconds: {{ .livenessProbe.initialDelaySeconds | default 15 }}
+            periodSeconds: {{ .livenessProbe.periodSeconds | default 1 }}
+            timeoutSeconds: {{ .livenessProbe.timeoutSeconds | default 3 }}
+        {{- end }}
+        {{- if .readinessProbe }}
+          readinessProbe:
+            httpGet:
+              path: {{ .readinessProbe.path }}
+              port: {{ .readinessProbe.port }}
+            initialDelaySeconds: {{ .readinessProbe.initialDelaySeconds | default 15 }}
+            periodSeconds: {{ .readinessProbe.periodSeconds | default 1 }}
+            timeoutSeconds: {{ .readinessProbe.timeoutSeconds | default 3 }}
+            failureThreshold: {{ .readinessProbe.failureThreshold | default 120 }}
+        {{- end }}
+        {{- if .volumeMounts }}
+          volumeMounts:
+{{ toYaml .volumeMounts | indent 12 }}
+        {{- end }}
+        {{- if .resources }}
+          resources:
+{{ toYaml .resources | indent 12 }}
+        {{- end }}
+        {{- end }} # end for the range over containers
+    {{- if .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- range .Values.imagePullSecrets }}
+        - name: {{ .name }}
+        {{- end }}
+    {{- end }}
+    {{- if .Values.volumes }}
+      volumes:
+{{ toYaml .Values.volumes | indent 8 }}
+    {{- end }}
+    {{- if .Values.restartPolicy }}
+      restartPolicy: {{ .Values.restartPolicy }}
+    {{- end }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+
+{{- end }}

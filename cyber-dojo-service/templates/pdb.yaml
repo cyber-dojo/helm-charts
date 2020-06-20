@@ -1,0 +1,14 @@
+{{- if .Values.disruptionBudget }}
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ template "app.fullname" . }}-pdb
+spec:
+{{- if .Values.disruptionBudget.minAvailable }}
+  minAvailable: {{ .Values.disruptionBudget.minAvailable }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ template "app.fullname" . }}
+      release: {{ .Release.Name }}-{{ .Chart.Name }}
+{{- end }}      
