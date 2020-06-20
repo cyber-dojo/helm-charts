@@ -101,7 +101,6 @@ affinity: {}
 
 tolerations: []
 
-# service
 service: {}
   # type: "ClusterIP" (default), "NodePort" or "LoadBalancer"
   # port: 80  
@@ -115,15 +114,8 @@ ingress: {}
   # hosts: 
   #   - example.com -- enables access by host name, required for tls
   # annotations: {}
-  # additionalPaths:
-  #   - path: \
-  #     serviceName: xyz
-  #     servicePort: 8080
-  #   - path: \
-  #     serviceName: abc
-  #     servicePort: 8090
 
-# pvc:
+pvc: {}
   # name: my-pvc
   # storage: 5Gi
   #
