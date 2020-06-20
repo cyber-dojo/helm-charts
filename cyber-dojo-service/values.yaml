@@ -109,10 +109,9 @@ service: {}
   #   - prometheus.io/scrape: "true"
   #   - prometheus.io/port: "80"
 
-# When ingress is set to true. tls is also added. For details see templates/ingress
-ingress:
-  # Used to create an Ingress record.
-  enabled: false
+ingress: {}
+  # tls_enabled: true
+  # ip_enabled: true
   # hosts: 
   #   - example.com
   # annotations: {}
@@ -122,9 +121,13 @@ ingress:
   #     servicePort: 8080
   #   - path: \
   #     serviceName: abc
-  #     servicePort: 8090  
+  #     servicePort: 8090
+
 # pvc:
-#   name: my-pvc
-#   storage: 5Gi
-#   matchLabels:
-#     target: my-app  
+  # name: my-pvc
+  # storage: 5Gi
+  #
+  # to bind existing perstistent volume:
+  # matchLabels:
+  #   target: my-app
+
