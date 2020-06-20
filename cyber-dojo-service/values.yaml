@@ -110,10 +110,10 @@ service: {}
   #   - prometheus.io/port: "80"
 
 ingress: {}
-  # tls_enabled: true
-  # ip_enabled: true
+  # tls_enabled: true -- enables https
+  # default_enabled: true -- enables access by ip
   # hosts: 
-  #   - example.com
+  #   - example.com -- enables access by host name, required for tls
   # annotations: {}
   # additionalPaths:
   #   - path: \
