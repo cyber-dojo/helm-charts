@@ -90,6 +90,13 @@ spec:
                 key: {{ .secretKey }}
           {{- end }}
           {{- end }}
+          {{- if $.Values.env }}
+          env:
+          {{- range $key, $value := $.Values.env }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+          {{- end }}
+          {{- end }}
           {{- if .securityContext }}
           securityContext:
 {{ toYaml .securityContext | indent 12 }}
