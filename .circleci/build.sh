@@ -2,17 +2,7 @@
 # To be changed with GCS access keys, region, repo name and url. Creating repo and SA in GCS is a prerequisite
 # cli commands to be used is
 function sanity_check() {
-:'
-  if [ -z "${AWS_ACCESS_KEY_ID}" ]; then
-    echo "AWS_ACCESS_KEY_ID found empty. Exiting ..."
-    exit 1
-  fi
-
-  if [ -z "${AWS_DEFAULT_REGION}" ]; then
-    echo "AWS_DEFAULT_REGION found empty. Exiting ..."
-    exit 1
-  fi
-'
+  
   if [ -z "${GCS_SECRET_ACCESS_KEY}" ]; then
     echo "GCS_SECRET_ACCESS_KEY found empty. Exiting ..."
     exit 1

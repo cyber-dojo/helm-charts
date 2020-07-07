@@ -1,5 +1,5 @@
 # adapted from https://github.com/hypertrace/helm-gcs-packager/blob/master/Dockerfile
-# manually built and pushed as praqma/helm-gcp
+# manually built and pushed as praqma/helm-gsutil
 FROM google/cloud-sdk:alpine
 
 # Install Helm
