@@ -2,8 +2,7 @@ version: 2
 jobs:
     build:
       docker:
-        - image: praqma/helm-aws #Change to helm-gcs
+        - image: praqma/helm-gsutil # Upload image to praqma org
       steps:
         - checkout
-        - run: chmod +x .circleci/build.sh
         - run: .circleci/build.sh

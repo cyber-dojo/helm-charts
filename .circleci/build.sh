@@ -2,7 +2,7 @@
 # To be changed with GCS access keys, region, repo name and url. Creating repo and SA in GCS is a prerequisite
 # cli commands to be used is
 function sanity_check() {
-  
+
   if [ -z "${GCS_SECRET_ACCESS_KEY}" ]; then
     echo "GCS_SECRET_ACCESS_KEY found empty. Exiting ..."
     exit 1
@@ -14,7 +14,7 @@ function sanity_check() {
   fi
 
   if [ -z "${CYBERDOJO_HELM_REPO_BUCKET_NAME}" ]; then
-    echo "REPO_URL found empty. Exiting ..."
+    echo "REPO_BUCKET_NAME found empty. Exiting ..."
     exit 1
   fi
 }
