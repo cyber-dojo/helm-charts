@@ -1,7 +1,8 @@
 #!/bin/bash
 # To be changed with GCS access keys, region, repo name and url. Creating repo and SA in GCS is a prerequisite
-# cli commands to be used is GCS
+# cli commands to be used is
 function sanity_check() {
+:'
   if [ -z "${AWS_ACCESS_KEY_ID}" ]; then
     echo "AWS_ACCESS_KEY_ID found empty. Exiting ..."
     exit 1
@@ -11,18 +12,18 @@ function sanity_check() {
     echo "AWS_DEFAULT_REGION found empty. Exiting ..."
     exit 1
   fi
-
-  if [ -z "${AWS_SECRET_ACCESS_KEY}" ]; then
-    echo "AWS_SECRET_ACCESS_KEY found empty. Exiting ..."
+'
+  if [ -z "${GCS_SECRET_ACCESS_KEY}" ]; then
+    echo "GCS_SECRET_ACCESS_KEY found empty. Exiting ..."
     exit 1
   fi
 
-  if [ -z "${PRAQMA_HELM_REPO_NAME}" ]; then
+  if [ -z "${CYBERDOJO_HELM_REPO_NAME}" ]; then
     echo "REPO_NAME found empty. Exiting ..."
     exit 1
   fi
 
-  if [ -z "${PRAQMA_S3_HELM_REPO_BUCKET_NAME}" ]; then
+  if [ -z "${CYBERDOJO_HELM_REPO_BUCKET_NAME}" ]; then
     echo "REPO_URL found empty. Exiting ..."
     exit 1
   fi
@@ -35,10 +36,10 @@ echo "initializing helm ..."
 helm init --client-only
 
 echo "creating repo URLs ..."
-export PRAQMA_S3_HELM_REPO_URL="https://$PRAQMA_S3_HELM_REPO_BUCKET_NAME.s3.amazonaws.com/"
+export CYBERDOJO_GCS_HELM_REPO_URL="gs://$CYBERDOJO_HELM_REPO_BUCKET_NAME"
 
 echo "adding helm repo ..."
-helm repo add $PRAQMA_HELM_REPO_NAME $PRAQMA_S3_HELM_REPO_URL
+helm repo add $CYBERDOJO_HELM_REPO_NAME $CYBERDOJO_HELM_REPO_BUCKET_NAME
 
 echo "creating .charts directory ..."
 mkdir -p .charts
@@ -74,33 +75,22 @@ done
 
 # pulling existing helm repo index.yaml to be merged with the new charts info.
 # Without this, old chart versions can become undiscoverable in the repo.
-aws s3 cp s3://$PRAQMA_S3_HELM_REPO_BUCKET_NAME/index.yaml oldIndex.yaml
+gsutil cp $CYBERDOJO_GCS_HELM_REPO_URL/index.yaml oldIndex.yaml
 
 echo "generating index.yaml ..."
-helm repo index .charts --url $PRAQMA_S3_HELM_REPO_URL --merge oldIndex.yaml
+helm repo index .charts --url $CYBERDOJO_GCS_HELM_REPO_URL --merge oldIndex.yaml
 
-echo "pushing charts to $PRAQMA_HELM_REPO_NAME repo ..."
+echo "pushing charts to $CYBERDOJO_HELM_REPO_NAME repo ..."
 
-# pushing charts to s3
-aws s3 cp .charts s3://$PRAQMA_S3_HELM_REPO_BUCKET_NAME/ --recursive
+# pushing charts to cloud storage
+gsutil cp -r .charts $CYBERDOJO_GCS_HELM_REPO_URL/
 if [ $? -gt 0 ]; then
-    echo "Failed to push charts to S3 ... Terminating!"
+    echo "Failed to push charts to storage ... Terminating!"
     exit 9
 fi
-
-# Deprecated since it uses helm s3 plugin and that pushes charts with private permissions.
-# Does not fit for public repos.
-#
-# for filename in .charts/*; do
-#   helm s3 push --force $filename $PRAQMA_HELM_REPO_NAME
-#   if [ $? -gt 0 ]; then
-#     echo "Package $d has errors when pushing ... Terminating!"
-#     exit 9
-#   fi
-# done
 
 echo "updaing repo ..."
 helm repo update
 
-echo "listing charts in $PRAQMA_HELM_REPO_NAME repo ..."
-helm search $PRAQMA_HELM_REPO_NAME
+echo "listing charts in $CYBERDOJO_HELM_REPO_NAME repo ..."
+helm search $CYBERDOJO_HELM_REPO_NAME
