@@ -70,14 +70,11 @@ done
 echo "generating index.yaml ..."
 helm repo index .charts --url $CYBEROJO_HELM_REPO_PUBLIC_URL 
 # --merge oldIndex.yaml
-ls -a
-cd .charts
-ls -a
-cd ../
+
 echo "pushing charts to $CYBERDOJO_HELM_REPO_NAME repo ..."
 
 # pushing charts to cloud storage
-gsutil cp -r .charts $CYBERDOJO_HELM_REPO_URL/
+gsutil cp -r .charts/*  $CYBERDOJO_HELM_REPO_URL/
 if [ $? -gt 0 ]; then
     echo "Failed to push charts to storage ... Terminating!"
     exit 9
