@@ -1,21 +1,8 @@
+# adapted from https://hub.docker.com/r/projectsigma/gcloud-docker/
 # manually built and pushed as praqma/helm-gsutil
-FROM docker:17
+FROM projectsigma/gcloud-docker
 
 ENV HELM_VERSION=v2.14.1
-
-# download apk index
-RUN apk add --update
-
-#common
-RUN apk add --virtual .builtin-utils curl bash
-
-#gsutil
-RUN apk add --virtual .gsutil-runtime-deps python && \
-    curl -Lo gsutil.tar.gz https://storage.googleapis.com/pub/gsutil.tar.gz && \
-    tar --no-same-owner -zxvf gsutil.tar.gz -C /usr/local/bin && \
-    rm gsutil.tar.gz
-ENV PATH=${PATH}:/usr/local/bin/gsutil 
-
 # Install Helm
 RUN curl -Lo helm-${HELM_VERSION}-linux-amd64.tar.gz https://get.helm.sh/helm-${HELM_VERSION}-linux-amd64.tar.gz && \
     tar -zxvf helm-${HELM_VERSION}-linux-amd64.tar.gz && \

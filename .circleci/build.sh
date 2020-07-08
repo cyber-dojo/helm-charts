@@ -22,7 +22,7 @@ function sanity_check() {
 echo "performing sanity checks ..."
 sanity_check
 
-echo "adding gcloud auth"
+#echo "adding gcloud auth"
 echo ${GCS_SECRET_ACCESS_KEY} | base64 --decode --ignore-garbage > gcloud-service-key.json
 gcloud auth activate-service-account --key-file gcloud-service-key.json
 echo "initializing helm ..."
