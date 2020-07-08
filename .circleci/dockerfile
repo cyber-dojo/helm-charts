@@ -12,7 +12,7 @@ RUN apk add --virtual .builtin-utils curl bash
 #gsutil
 RUN apk add --virtual .gsutil-runtime-deps python && \
     curl -Lo gsutil.tar.gz https://storage.googleapis.com/pub/gsutil.tar.gz && \
-    tar -zxvf gsutil.tar.gz -C /usr/local/bin && \
+    tar --no-same-owner -zxvf gsutil.tar.gz -C /usr/local/bin && \
     rm gsutil.tar.gz
 ENV PATH=${PATH}:/usr/local/bin/gsutil 
 
