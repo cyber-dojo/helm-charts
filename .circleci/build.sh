@@ -28,7 +28,7 @@ gcloud auth activate-service-account --key-file gcloud-service-key.json
 helm init --client-only
 
 export CYBERDOJO_HELM_REPO_URL="gs://$CYBERDOJO_HELM_REPO_BUCKET_NAME"
-export CYBEROJO_HELM_REPO_PUBLIC_URL="https://storage.googleapis.com/$CYBERDOJO_HELM_REPO_BUCKET_NAME"
+export CYBEROJO_HELM_REPO_PUBLIC_URL="https://storage.googleapis.com/$CYBERDOJO_HELM_REPO_BUCKET_NAME/"
 
 helm repo add $CYBERDOJO_HELM_REPO_NAME $CYBEROJO_HELM_REPO_PUBLIC_URL
 echo "creating .charts directory ..."
