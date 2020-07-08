@@ -73,6 +73,7 @@ helm repo index .charts --url $CYBEROJO_HELM_REPO_PUBLIC_URL
 ls -a
 cd .charts
 ls -a
+cd ../
 echo "pushing charts to $CYBERDOJO_HELM_REPO_NAME repo ..."
 
 # pushing charts to cloud storage
