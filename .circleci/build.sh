@@ -30,7 +30,7 @@ helm init --client-only
 export CYBERDOJO_HELM_REPO_URL="gs://$CYBERDOJO_HELM_REPO_BUCKET_NAME"
 export CYBEROJO_HELM_REPO_PUBLIC_URL="https://storage.googleapis.com/$CYBERDOJO_HELM_REPO_BUCKET_NAME/"
 
-# helm repo add $CYBERDOJO_HELM_REPO_NAME $CYBEROJO_HELM_REPO_PUBLIC_URL
+helm repo add $CYBERDOJO_HELM_REPO_NAME $CYBEROJO_HELM_REPO_PUBLIC_URL
 echo "creating .charts directory ..."
 mkdir -p .charts
 
@@ -65,11 +65,10 @@ done
 
 # pulling existing helm repo index.yaml to be merged with the new charts info.
 # Without this, old chart versions can become undiscoverable in the repo.
-# gsutil cp $CYBERDOJO_GCS_HELM_REPO_URL/index.yaml oldIndex.yaml
+gsutil cp $CYBERDOJO_GCS_HELM_REPO_URL/index.yaml oldIndex.yaml
 # echo "non existing index copied"
 echo "generating index.yaml ..."
-helm repo index .charts --url $CYBEROJO_HELM_REPO_PUBLIC_URL 
-# --merge oldIndex.yaml
+helm repo index .charts --url $CYBEROJO_HELM_REPO_PUBLIC_URL --merge oldIndex.yaml
 
 echo "pushing charts to $CYBERDOJO_HELM_REPO_NAME repo ..."
 
