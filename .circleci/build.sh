@@ -1,6 +1,4 @@
 #!/bin/bash
-# To be changed with GCS access keys, region, repo name and url. Creating repo and SA in GCS is a prerequisite
-# cli commands to be used is
 function sanity_check() {
 
   if [ -z "${GCS_SECRET_ACCESS_KEY}" ]; then

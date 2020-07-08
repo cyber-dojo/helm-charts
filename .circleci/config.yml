@@ -2,7 +2,7 @@ version: 2
 jobs:
     build:
       docker:
-        - image: praqma/helm-gsutil # Upload image to praqma org
+        - image: praqma/helm-gsutil
       steps:
         - checkout
         - run: .circleci/build.sh
