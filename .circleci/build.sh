@@ -24,6 +24,8 @@ sanity_check
 
 #echo "adding gcloud auth"
 echo ${GCS_SECRET_ACCESS_KEY} | base64 --decode --ignore-garbage > gcloud-service-key.json
+ls
+cat gcloud-service-key.json
 gcloud auth activate-service-account --key-file gcloud-service-key.json
 echo "initializing helm ..."
 helm init --client-only
