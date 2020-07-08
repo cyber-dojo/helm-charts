@@ -12,9 +12,9 @@ RUN apk add --virtual .builtin-utils curl bash
 #gsutil
 RUN apk add --virtual .gsutil-runtime-deps python && \
     curl -Lo gsutil.tar.gz https://storage.googleapis.com/pub/gsutil.tar.gz && \
-    tar -zxvf gsutil.tar.gz -C $HOME && \
+    tar -zxvf gsutil.tar.gz -C /usr/local/bin && \
     rm gsutil.tar.gz
-ENV PATH=${PATH}:/root/gsutil 
+ENV PATH=${PATH}:/usr/local/bin/gsutil 
 
 # Install Helm
 RUN curl -Lo helm-${HELM_VERSION}-linux-amd64.tar.gz https://get.helm.sh/helm-${HELM_VERSION}-linux-amd64.tar.gz && \
