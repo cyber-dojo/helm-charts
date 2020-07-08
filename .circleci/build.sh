@@ -25,14 +25,11 @@ sanity_check
 #echo "adding gcloud auth"
 echo ${GCS_SECRET_ACCESS_KEY} | base64 -d > gcloud-service-key.json
 gcloud auth activate-service-account --key-file gcloud-service-key.json
-echo "initializing helm ..."
-helm init --client-only
-echo "helm initialised"
-echo "creating repo URLs ..."
-export CYBERDOJO_GCS_HELM_REPO_GSUTIL_URL="gs://$CYBERDOJO_HELM_REPO_BUCKET_NAME"
-export CYBERDOJO_GCS_HELM_REPO_URL="https://$CYBERDOJO_HELM_REPO_BUCKET_NAME.storage.googleapis.com/"
 
-echo "adding helm repo ..."
+helm init --client-only
+
+export CYBERDOJO_GCS_HELM_REPO_URL="gs://$CYBERDOJO_HELM_REPO_BUCKET_NAME"
+
 helm repo add $CYBERDOJO_HELM_REPO_NAME $CYBERDOJO_GCS_HELM_REPO_URL
 echo "helm repo added"
 echo "creating .charts directory ..."
@@ -72,7 +69,7 @@ done
 
 # pulling existing helm repo index.yaml to be merged with the new charts info.
 # Without this, old chart versions can become undiscoverable in the repo.
-gsutil cp $CYBERDOJO_GCS_HELM_REPO_GSUTIL_URL/index.yaml oldIndex.yaml
+gsutil cp $CYBERDOJO_GCS_HELM_REPO_URL/index.yaml oldIndex.yaml
 echo "non existing index copied"
 echo "generating index.yaml ..."
 helm repo index .charts --url $CYBERDOJO_GCS_HELM_REPO_URL --merge oldIndex.yaml
@@ -80,7 +77,7 @@ echo "index generated"
 echo "pushing charts to $CYBERDOJO_HELM_REPO_NAME repo ..."
 
 # pushing charts to cloud storage
-gsutil cp -r .charts $CYBERDOJO_GCS_HELM_REPO_GSUTIL_URL/
+gsutil cp -r .charts $CYBERDOJO_GCS_HELM_REPO_URL/
 if [ $? -gt 0 ]; then
     echo "Failed to push charts to storage ... Terminating!"
     exit 9
