@@ -22,17 +22,15 @@ function sanity_check() {
 echo "performing sanity checks ..."
 sanity_check
 
-#echo "adding gcloud auth"
 echo ${GCS_SECRET_ACCESS_KEY} | base64 -d > gcloud-service-key.json
 gcloud auth activate-service-account --key-file gcloud-service-key.json
 
 helm init --client-only
 
-export CYBERDOJO_GCS_HELM_REPO_URL="gs://$CYBERDOJO_HELM_REPO_BUCKET_NAME"
-export CYBEROJO_GCS_HELM_REPO_PUBLIC_URL="https://storage.googleapis.com/$CYBERDOJO_HELM_REPO_BUCKET_NAME"
+export CYBERDOJO_HELM_REPO_URL="gs://$CYBERDOJO_HELM_REPO_BUCKET_NAME"
+export CYBEROJO_HELM_REPO_PUBLIC_URL="https://storage.googleapis.com/$CYBERDOJO_HELM_REPO_BUCKET_NAME"
 
-#helm repo add $CYBERDOJO_HELM_REPO_NAME $CYBEROJO_GCS_HELM_REPO_PUBLIC_URL
-echo "helm repo added"
+helm repo add $CYBERDOJO_HELM_REPO_NAME $CYBEROJO_HELM_REPO_PUBLIC_URL
 echo "creating .charts directory ..."
 mkdir -p .charts
 
@@ -41,7 +39,6 @@ for d in */ ; do
     if [ "$d" != "docs/" ]; then
       echo "linting package $d"
       helm lint $d
-      echo "lint done"
       if [ $? -gt 0 ]; then
         echo "Package $d has errors ... Terminating!"
         exit 9
@@ -58,9 +55,7 @@ for d in */ ; do
         helm dependency update;
         cd ..
       fi
-      echo "dep done"
       helm package $d -d .charts
-      echo "pak done"
       if [ $? -gt 0 ]; then
         echo "Package $d has errors ... Terminating!"
         exit 9
@@ -70,16 +65,14 @@ done
 
 # pulling existing helm repo index.yaml to be merged with the new charts info.
 # Without this, old chart versions can become undiscoverable in the repo.
-#gsutil cp $CYBERDOJO_GCS_HELM_REPO_URL/index.yaml oldIndex.yaml
+gsutil cp $CYBERDOJO_GCS_HELM_REPO_URL/index.yaml oldIndex.yaml
 echo "non existing index copied"
 echo "generating index.yaml ..."
-helm repo index .charts --url $CYBEROJO_GCS_HELM_REPO_PUBLIC_URL 
-#--merge oldIndex.yaml
-echo "index generated"
+helm repo index .charts --url $CYBEROJO_HELM_REPO_PUBLIC_URL --merge oldIndex.yaml
 echo "pushing charts to $CYBERDOJO_HELM_REPO_NAME repo ..."
 
 # pushing charts to cloud storage
-gsutil cp -r .charts $CYBERDOJO_GCS_HELM_REPO_URL/
+gsutil cp -r .charts $CYBERDOJO_HELM_REPO_URL/
 if [ $? -gt 0 ]; then
     echo "Failed to push charts to storage ... Terminating!"
     exit 9
@@ -87,7 +80,5 @@ fi
 
 echo "updaing repo ..."
 helm repo update
-echo "repo updated"
 echo "listing charts in $CYBERDOJO_HELM_REPO_NAME repo ..."
 helm search $CYBERDOJO_HELM_REPO_NAME
-echo "search done"
