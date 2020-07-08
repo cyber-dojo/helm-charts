@@ -29,8 +29,9 @@ gcloud auth activate-service-account --key-file gcloud-service-key.json
 helm init --client-only
 
 export CYBERDOJO_GCS_HELM_REPO_URL="gs://$CYBERDOJO_HELM_REPO_BUCKET_NAME"
+export CYBEROJO_GCS_HELM_REPO_PUBLIC_URL="https://$CYBERDOJO_HELM_REPO_BUCKET_NAME.storage.googleapis.com/"
 
-helm repo add $CYBERDOJO_HELM_REPO_NAME $CYBERDOJO_GCS_HELM_REPO_URL
+helm repo add $CYBERDOJO_HELM_REPO_NAME $CYBEROJO_GCS_HELM_REPO_PUBLIC_URL
 echo "helm repo added"
 echo "creating .charts directory ..."
 mkdir -p .charts
@@ -72,7 +73,7 @@ done
 gsutil cp $CYBERDOJO_GCS_HELM_REPO_URL/index.yaml oldIndex.yaml
 echo "non existing index copied"
 echo "generating index.yaml ..."
-helm repo index .charts --url $CYBERDOJO_GCS_HELM_REPO_URL --merge oldIndex.yaml
+helm repo index .charts --url $CYBEROJO_GCS_HELM_REPO_PUBLIC_URL --merge oldIndex.yaml
 echo "index generated"
 echo "pushing charts to $CYBERDOJO_HELM_REPO_NAME repo ..."
 
