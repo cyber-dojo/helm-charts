@@ -1,4 +1,6 @@
-The helm charts are built with circleci and pushed into a public cyberdojo helm repository hosted in GCP. 
+This repo currently contains a skeleton chart for use by the [https://github.com/cyber-dojo/k8s-install](https://github.com/cyber-dojo/k8s-install) script.
+
+The helm charts are built with circleci and pushed into a public cyberdojo helm repository hosted in GCP.
 
 https://app.circleci.com/pipelines/github/cyber-dojo/helm-charts?branch=master
 
